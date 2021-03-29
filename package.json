@@ -10,8 +10,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jquery": "^2.0.42",
     "typescript": "^4.2.3"
   },
   "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalacorte/typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalacorte/typescript/issues"
+  },
+  "homepage": "https://github.com/dalacorte/typescript#readme",
   "description": ""
 }
