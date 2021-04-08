@@ -1,4 +1,4 @@
-import { tempoDeExecucao } from '../helpers/decorators/tempoDeExecucao'
+import { tempoDeExecucao } from '../helpers/decorators/tempo-de-execucao'
 
 export abstract class View<T> {
 
