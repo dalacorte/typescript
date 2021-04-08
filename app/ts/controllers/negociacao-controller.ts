@@ -1,4 +1,4 @@
-import { tempoDeExecucao } from '../helpers/decorators/tempoDeExecucao'
+import { tempoDeExecucao } from '../helpers/decorators/tempo-de-execucao'
 import { NegociacoesView } from '../views/negociacoes-view';
 import { MensagemView } from '../views/mensagem-view';
 import { Negociacoes } from '../models/negociacoes';
