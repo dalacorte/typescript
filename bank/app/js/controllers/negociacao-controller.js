@@ -1,4 +1,4 @@
-System.register(["../helpers/decorators/dom-inject", "../views/negociacoes-view", "../views/mensagem-view", "../models/negociacoes", "../models/negociacao"], function (exports_1, context_1) {
+System.register(["../service/negociacao-service", "../helpers/decorators/dom-inject", "../views/negociacoes-view", "../helpers/decorators/throttle", "../views/mensagem-view", "../models/negociacoes", "../models/negociacao"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6,15 +6,21 @@ System.register(["../helpers/decorators/dom-inject", "../views/negociacoes-view"
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var dom_inject_1, negociacoes_view_1, mensagem_view_1, negociacoes_1, negociacao_1, NegociacaoController, DiaDaSemana;
+    var negociacao_service_1, dom_inject_1, negociacoes_view_1, throttle_1, mensagem_view_1, negociacoes_1, negociacao_1, NegociacaoController, DiaDaSemana;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
+            function (negociacao_service_1_1) {
+                negociacao_service_1 = negociacao_service_1_1;
+            },
             function (dom_inject_1_1) {
                 dom_inject_1 = dom_inject_1_1;
             },
             function (negociacoes_view_1_1) {
                 negociacoes_view_1 = negociacoes_view_1_1;
+            },
+            function (throttle_1_1) {
+                throttle_1 = throttle_1_1;
             },
             function (mensagem_view_1_1) {
                 mensagem_view_1 = mensagem_view_1_1;
@@ -32,6 +38,7 @@ System.register(["../helpers/decorators/dom-inject", "../views/negociacoes-view"
                     this._negociacoes = new negociacoes_1.Negociacoes();
                     this._negociacoesView = new negociacoes_view_1.NegociacoesView('#negociacoesView', true);
                     this._mensagemView = new mensagem_view_1.MensagemView('#mensagemView', true);
+                    this._service = new negociacao_service_1.NegociacaoService();
                     this._negociacoesView.update(this._negociacoes);
                 }
                 adiciona(event) {
@@ -63,16 +70,12 @@ System.register(["../helpers/decorators/dom-inject", "../views/negociacoes-view"
                             throw new Error(res.statusText);
                         }
                     }
-                    fetch('http://localhost:8080/dados')
-                        .then(res => isOk(res))
-                        .then(res => res.json())
-                        .then((dados) => {
-                        dados
-                            .map(dado => new negociacao_1.Negociacao(new Date, dado.vezes, dado.montante))
-                            .forEach(negociacao => this._negociacoes.adiciona(negociacao));
+                    this._service
+                        .obterNegociacoes(isOk)
+                        .then(negociacoes => {
+                        negociacoes.forEach(negociacao => this._negociacoes.adiciona(negociacao));
                         this._negociacoesView.update(this._negociacoes);
-                    })
-                        .catch(err => console.log(err.message));
+                    });
                 }
             };
             __decorate([
@@ -84,6 +87,9 @@ System.register(["../helpers/decorators/dom-inject", "../views/negociacoes-view"
             __decorate([
                 dom_inject_1.domInject('#valor')
             ], NegociacaoController.prototype, "_inputValor", void 0);
+            __decorate([
+                throttle_1.throttle(500)
+            ], NegociacaoController.prototype, "importaDados", null);
             exports_1("NegociacaoController", NegociacaoController);
             (function (DiaDaSemana) {
                 DiaDaSemana[DiaDaSemana["Domingo"] = 0] = "Domingo";
