@@ -1,4 +1,4 @@
-System.register(["../service/negociacao-service", "../helpers/decorators/dom-inject", "../views/negociacoes-view", "../helpers/decorators/throttle", "../views/mensagem-view", "../models/negociacoes", "../models/negociacao"], function (exports_1, context_1) {
+System.register(["../service/negociacao-service", "../helpers/decorators/dom-inject", "../views/negociacoes-view", "../helpers/decorators/throttle", "../views/mensagem-view", "../models/negociacoes", "../models/negociacao", "../helpers/utils"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6,7 +6,7 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var negociacao_service_1, dom_inject_1, negociacoes_view_1, throttle_1, mensagem_view_1, negociacoes_1, negociacao_1, NegociacaoController, DiaDaSemana;
+    var negociacao_service_1, dom_inject_1, negociacoes_view_1, throttle_1, mensagem_view_1, negociacoes_1, negociacao_1, utils_1, NegociacaoController, DiaDaSemana;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -30,6 +30,9 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
             },
             function (negociacao_1_1) {
                 negociacao_1 = negociacao_1_1;
+            },
+            function (utils_1_1) {
+                utils_1 = utils_1_1;
             }
         ],
         execute: function () {
@@ -55,6 +58,7 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
                         console.log(negociacao.valor);
                     });
                     this._negociacoes.adiciona(negociacao);
+                    utils_1.imprimir(negociacao, this._negociacoes);
                     this._negociacoesView.update(this._negociacoes);
                     this._mensagemView.update('Negociação adicionada com sucesso');
                 }
@@ -62,16 +66,15 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
                     return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
                 }
                 importaDados() {
-                    function isOk(res) {
+                    this._service
+                        .obterNegociacoes(res => {
                         if (res.ok) {
                             return res;
                         }
                         else {
                             throw new Error(res.statusText);
                         }
-                    }
-                    this._service
-                        .obterNegociacoes(isOk)
+                    })
                         .then(negociacoes => {
                         negociacoes.forEach(negociacao => this._negociacoes.adiciona(negociacao));
                         this._negociacoesView.update(this._negociacoes);

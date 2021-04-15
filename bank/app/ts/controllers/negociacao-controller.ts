@@ -1,11 +1,11 @@
 import { NegociacaoService } from '../service/negociacao-service';
-import { NegociacaoParcial } from '../models/negociacao-parcial';
 import { domInject } from '../helpers/decorators/dom-inject';
 import { NegociacoesView } from '../views/negociacoes-view';
 import { throttle } from '../helpers/decorators/throttle';
 import { MensagemView } from '../views/mensagem-view';
 import { Negociacoes } from '../models/negociacoes';
 import { Negociacao } from '../models/negociacao';
+import { imprimir } from '../helpers/utils';
 
 export class NegociacaoController {
 
@@ -49,6 +49,9 @@ export class NegociacaoController {
         });
 
         this._negociacoes.adiciona(negociacao);
+
+        imprimir(negociacao, this._negociacoes);
+
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação adicionada com sucesso');
     }
@@ -60,16 +63,14 @@ export class NegociacaoController {
     @throttle(500)
     importaDados() {
 
-        function isOk(res: Response) {
-            if (res.ok) {
-                return res;
-            } else {
-                throw new Error(res.statusText);
-            }
-        }
-
         this._service
-            .obterNegociacoes(isOk)
+            .obterNegociacoes(res => {
+                if (res.ok) {
+                    return res;
+                } else {
+                    throw new Error(res.statusText);
+                }
+            })
             .then(negociacoes => {
                 negociacoes.forEach(negociacao =>
                     this._negociacoes.adiciona(negociacao));

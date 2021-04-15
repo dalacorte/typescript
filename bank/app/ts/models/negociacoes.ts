@@ -12,5 +12,10 @@ export class Negociacoes {
 
         return ([] as Negociacao[]).concat(this._negociacoes);
     }
+
+    texto(): void {
+
+        console.log(JSON.stringify(this._negociacoes));
+    }
 }
 
