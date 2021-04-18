@@ -1,4 +1,4 @@
-export abstract class Imprimivel {
+export interface Imprimivel {
 
-    abstract texto(): void;
+    texto(): void;
 }
