@@ -15,7 +15,10 @@ System.register(["../models/negociacao"], function (exports_1, context_1) {
                         .then((res) => handler(res))
                         .then((res) => res.json())
                         .then((dados) => dados.map((dado) => new negociacao_1.Negociacao(new Date(), dado.vezes, dado.montante)))
-                        .catch((err) => console.log(err.message));
+                        .catch((err) => {
+                        console.log(err);
+                        throw new Error('Não foi possível importar as negociações');
+                    });
                 }
             };
             exports_1("NegociacaoService", NegociacaoService);

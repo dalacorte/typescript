@@ -6,6 +6,15 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
+    var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    };
     var negociacao_service_1, dom_inject_1, negociacoes_view_1, throttle_1, mensagem_view_1, negociacoes_1, negociacao_1, utils_1, NegociacaoController, DiaDaSemana;
     var __moduleName = context_1 && context_1.id;
     return {
@@ -66,18 +75,26 @@ System.register(["../service/negociacao-service", "../helpers/decorators/dom-inj
                     return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
                 }
                 importaDados() {
-                    this._service
-                        .obterNegociacoes(res => {
-                        if (res.ok) {
-                            return res;
+                    return __awaiter(this, void 0, void 0, function* () {
+                        try {
+                            const negociacoes = yield this._service
+                                .obterNegociacoes(res => {
+                                if (res.ok) {
+                                    return res;
+                                }
+                                else {
+                                    throw new Error(res.statusText);
+                                }
+                            });
+                            const negociacoesImportadas = this._negociacoes.paraArray();
+                            negociacoes
+                                .filter(negociacao => !negociacoesImportadas.some(jaImportada => negociacao.igual(jaImportada)))
+                                .forEach(negociacao => this._negociacoes.adiciona(negociacao));
+                            this._negociacoesView.update(this._negociacoes);
                         }
-                        else {
-                            throw new Error(res.statusText);
+                        catch (err) {
+                            this._mensagemView.update(err.message);
                         }
-                    })
-                        .then(negociacoes => {
-                        negociacoes.forEach(negociacao => this._negociacoes.adiciona(negociacao));
-                        this._negociacoesView.update(this._negociacoes);
                     });
                 }
             };
